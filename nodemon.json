@@ -1,0 +1,5 @@
+{
+  "watch": ["src", "apps"],
+  "ext": "ts",
+  "exec": "pnpm build && node ."
+}
