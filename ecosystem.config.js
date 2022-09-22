@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       script: 'build/main.js',
-      watch: '.',
+      watch: true,
       ignore_watch: ['node_modules']
     }
   ]
