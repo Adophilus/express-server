@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   apps: [
     {
       script: 'build/main.js',
