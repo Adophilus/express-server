@@ -34,7 +34,7 @@ export default class extends Server {
     }
     start(port = parseInt(process.env.PORT ?? '8000'), host = process.env.HOST ?? '0.0.0.0') {
         this.app.listen(port, host, () => {
-            this.logger.info('Started app...');
+            this.logger.info('Started server...');
         });
     }
 }
