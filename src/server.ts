@@ -35,6 +35,7 @@ export default class extends Server {
     for (const file of files) {
       this.logger.info(`Loading app: '${file}'`)
       const _module = await import(`../${path.join(APPS_PATH, file)}`)
+      console.log(_module)
       this.app.use(`/${file}`, _module.app)
     }
   }
