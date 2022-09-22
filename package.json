@@ -5,6 +5,7 @@
     "dev": "nodemon",
 		"build": "tsc --project ."
 	},
+  "type": "module",
 	"dependencies": {
 		"@overnightjs/core": "^1.7.6",
 		"dotenv": "^16.0.2",
