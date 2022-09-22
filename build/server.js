@@ -27,7 +27,6 @@ export default class extends Server {
         const files = await readdir(APPS_PATH);
         for (const file of files) {
             this.logger.info(`Loading app: '${file}'`);
-            this.logger.info(__dirname);
             const _module = await import(`../${path.join(APPS_PATH, file)}`);
             this.logger.info(_module);
             this.app.use(`/${file}`, _module.app);
