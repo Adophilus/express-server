@@ -54,7 +54,10 @@ class default_1 extends core_1.Server {
     }
     defineRoutes() {
         this.app.use((req, res) => {
-            res.status(http_status_codes_1.NOT_FOUND).send({ error: http_status_codes_1.ReasonPhrases.NOT_FOUND });
+            res.status(http_status_codes_1.NOT_FOUND).send({
+                error: http_status_codes_1.ReasonPhrases.NOT_FOUND,
+                path: req.url
+            });
         });
     }
     loadApps() {

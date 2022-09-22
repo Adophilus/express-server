@@ -23,7 +23,10 @@ export default class extends Server {
 
   private defineRoutes (): void {
     this.app.use((req: Request, res: Response) => {
-      res.status(NOT_FOUND).send({ error: ReasonPhrases.NOT_FOUND })
+      res.status(NOT_FOUND).send({
+        error: ReasonPhrases.NOT_FOUND,
+        path: req.url
+      })
     })
   }
 
