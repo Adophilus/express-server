@@ -67,10 +67,11 @@ class default_1 extends core_1.Server {
             }
         });
     }
-    start(port) {
-        var _a;
+    start(port, host) {
+        var _a, _b;
         if (port === void 0) { port = parseInt((_a = process.env.PORT) !== null && _a !== void 0 ? _a : '8000'); }
-        this.app.listen(port, () => {
+        if (host === void 0) { host = (_b = process.env.HOST) !== null && _b !== void 0 ? _b : '0.0.0.0'; }
+        this.app.listen(port, host, () => {
             this.logger.info('Started app...');
         });
     }
