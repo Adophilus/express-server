@@ -35,9 +35,10 @@ export default class extends Server {
     for (const file of files) {
       this.logger.info(`Loading app: '${file}'`)
       const _module = await import(`../${path.join(APPS_PATH, file)}`)
+      this.logger.info(`setting up '/${file}' endpoint`)
       this.app.use(`/${file}`, _module.app)
-      this.logger.info(`Loaded app: '${file}'`)
     }
+    this.logger.info("Loaded apps")
   }
 
   public start (port = parseInt(process.env.PORT ?? '8000'), host = process.env.HOST ?? '0.0.0.0'): void {
