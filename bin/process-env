@@ -76,4 +76,4 @@ cp .env.production $_tmpFile
 mangle-ports $_tmpFile $_tmpFile
 process-vars $_tmpFile $_tmpFile
 
-cat $_tmpFile
+cat $_tmpFile > .env
