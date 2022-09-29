@@ -5,7 +5,7 @@ _apps=($(ls apps))
 for _app in ${_apps[@]}
 do
   cd "apps/$_app"
-  ./process-env
+  ../../bin/process-env
   pnpm start:extra &
   cd ../../
 done
