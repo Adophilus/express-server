@@ -2,6 +2,7 @@ module.exports = {
   apps: [
     {
       script: './bin/start-apps-extra',
+      instances: 1,
       interpreter: 'bash'
     },
     {
