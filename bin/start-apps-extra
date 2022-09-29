@@ -1,7 +1,5 @@
 #! /usr/bin/env bash
 
-source bin/mangle-ports
-
 _apps=($(ls apps))
 
 for _app in ${_apps[@]}
