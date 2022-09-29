@@ -7,7 +7,7 @@ _apps=($(ls apps))
 for _app in ${_apps[@]}
 do
   cd "apps/$_app"
-  mangle-ports .env.production .env
+  ./process-env
   pnpm start:extra &
   cd ../../
 done

@@ -1,0 +1,79 @@
+#! /usr/bin/env bash
+
+function random-port () {
+  local from=1024
+  local to=65535
+  local numPorts=${1:-1}
+  comm -23 <(seq $from $to | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n $numPorts
+}
+
+function mangle-ports () {
+  local sourceFile="$1"
+  local destinationFile="$2"
+  local newLines=()
+
+  for line in $(cat "$sourceFile")
+  do
+    local oldPort=$(echo "$line" | sed -E 's/.*PORT=(.*)/\1/')
+    local newPort=$(random-port)
+    newLines+=("$(echo "$newFile"; echo "$line" | sed -E "s/(.*)PORT=.*/\1PORT=$newPort/")")
+  done
+
+  if [ -f "$destinationFile" ]
+  then
+    rm "$destinationFile"
+  fi
+
+  for line in ${newLines[@]}
+  do
+    echo $line >> "$destinationFile"
+  done
+}
+
+function process-vars () {
+  local sourceFile="$1"
+  local destinationFile="$2"
+  local newLines=()
+
+  declare -A __vars
+
+  for line in $(cat "$sourceFile")
+  do
+    local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
+    local value=$(echo "$line" | sed -E 's/.*?=(.*)/\1/')
+    __vars["$key"]="$value"
+  done
+
+  for line in $(cat "$sourceFile")
+  do
+    # newLines+=("$(echo $line | sed -E 's/.*\$\{([a-zA-Z0-9_]+)\}.*/\1/g')")
+    local newLine="$line"
+
+    while [ -n "$(echo $newLine | grep -E '\$\{([a-zA-Z0-9_]+)\}')" ]
+    do
+      local key="$(echo $newLine | sed -E 's/.*\$\{([a-zA-Z0-9_]+)\}.*/\1/')"
+      local value=${__vars["$key"]}
+      newLine="$(echo $newLine | sed -E "s/\\\$\{$key\}/$value/")"
+    done
+
+    newLines+=("$newLine")
+  done
+
+  if [ -f "$destinationFile" ]
+  then
+    rm "$destinationFile"
+  fi
+
+  for line in ${newLines[@]}
+  do
+    echo $line >> "$destinationFile"
+  done
+}
+
+_tmpFile=$(mktemp)
+cp .env.production $_tmpFile
+
+mangle-ports $_tmpFile $_tmpFile
+process-vars $_tmpFile $_tmpFile
+
+cat $_tmpFile

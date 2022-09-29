@@ -1,5 +1,0 @@
-#! /usr/bin/env bash
-
-source mangle-ports
-
-mangle-ports .env.production .env
