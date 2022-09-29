@@ -1,0 +1,31 @@
+#! /usr/bin/env bash
+
+function random-port () {
+  local from=1024
+  local to=65535
+  local numPorts=${1:-1}
+  comm -23 <(seq $from $to | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n $numPorts
+}
+
+function mangle-ports () {
+  local sourceFile="$1"
+  local destinationFile="$2"
+  local newLines=()
+
+  if [ -f "$destinationFile" ]
+  then
+    rm "$destinationFile"
+  fi
+
+  for line in $(cat "$sourceFile")
+  do
+    local oldPort=$(echo "$line" | sed -E 's/(.*)PORT=(.*)/\2/')
+    local newPort=$(random-port)
+    newLines+=("$(echo "$newFile"; echo "$line" | sed -E "s/(.*)PORT=(.*)/\1PORT=$newPort/")")
+  done
+
+  for line in ${newLines[@]}
+  do
+    echo $line >> "$destinationFile"
+  done
+}

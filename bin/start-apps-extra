@@ -1,11 +1,14 @@
 #! /usr/bin/env bash
 
+source bin/mangle-ports
+
 _apps=($(ls apps))
 
 for _app in ${_apps[@]}
 do
   cd "apps/$_app"
-  pnpm start &
+  mangle-ports .env.production .env
+  pnpm start:extra &
   cd ../../
 done
 
