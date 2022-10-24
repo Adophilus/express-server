@@ -111,7 +111,7 @@ function replace-vars () {
 }
 
 if [ -f "${_SOURCE_ENV}" ]
-do
+then
   _tmpFile="$(mktemp)"
 
   cp "${_SOURCE_ENV}" "$_tmpFile"
@@ -121,4 +121,4 @@ do
   replace-vars "$_tmpFile" "$_tmpFile"
 
   cat "$_tmpFile" > "${_WORKDIR}/.env"
-done
+fi
