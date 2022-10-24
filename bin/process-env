@@ -70,10 +70,45 @@ function process-vars () {
   done
 }
 
+
+function replace-vars () {
+  local sourceFile="$1"
+  local destinationFile="$2"
+  local newLines=()
+
+  declare -A __vars
+
+  for line in $(cat ".env.source")
+  do
+    local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
+    local value=$(echo "$line" | sed -E 's/.*?=(.*)/\1/')
+    __vars["$key"]="$value"
+  done
+
+  for line in $(cat "$sourceFile")
+  do
+    local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
+    if [ -n "${__vars[$key]+abc}" ]
+    then
+      newLines+=("$key=${__vars[$key]}")
+    fi
+  done
+
+  if [ -f "$destinationFile" ]
+  then
+    rm "$destinationFile"
+  fi
+
+  for line in ${newLines[@]}
+  do
+    echo $line >> "$destinationFile"
+  done
+}
 _tmpFile=$(mktemp)
-cp .env.production $_tmpFile
+cp .env.source $_tmpFile
 
 mangle-ports $_tmpFile $_tmpFile
 process-vars $_tmpFile $_tmpFile
+replace-vars $_tmpFile $_tmpFile
 
 cat $_tmpFile > .env
