@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+_WORKDIR="$1"
+_SOURCE_ENV="${_WORKDIR}/.env.source"
+
 function random-port () {
   local from=1024
   local to=65535
@@ -105,13 +108,15 @@ function replace-vars () {
   done
 }
 
-_workdir="$1"
-_tmpFile="$(mktemp)"
+if [ -f "${_SOURCE_ENV}" ]
+do
+  _tmpFile="$(mktemp)"
 
-cp "${workdir}/.env.source" "$_tmpFile"
+  cp "${_SOURCE_ENV}" "$_tmpFile"
 
-mangle-ports "$_tmpFile" "$_tmpFile"
-process-vars "$_tmpFile" "$_tmpFile"
-replace-vars "$_tmpFile" "$_tmpFile"
+  mangle-ports "$_tmpFile" "$_tmpFile"
+  process-vars "$_tmpFile" "$_tmpFile"
+  replace-vars "$_tmpFile" "$_tmpFile"
 
-cat "$_tmpFile" > "${_workdir}/.env"
+  cat "$_tmpFile" > "${_WORKDIR}/.env"
+done
