@@ -94,6 +94,8 @@ function replace-vars () {
     if [ -n "${__vars[$key]+abc}" ]
     then
       newLines+=("$key=${__vars[$key]}")
+    else
+      newLines+=("$line")
     fi
   done
 
