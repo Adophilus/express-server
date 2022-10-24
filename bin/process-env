@@ -104,11 +104,14 @@ function replace-vars () {
     echo $line >> "$destinationFile"
   done
 }
-_tmpFile=$(mktemp)
-cp .env.source $_tmpFile
 
-mangle-ports $_tmpFile $_tmpFile
-process-vars $_tmpFile $_tmpFile
-replace-vars $_tmpFile $_tmpFile
+_workdir="$1"
+_tmpFile="$(mktemp)"
 
-cat $_tmpFile > .env
+cp "${workdir}/.env.source" "$_tmpFile"
+
+mangle-ports "$_tmpFile" "$_tmpFile"
+process-vars "$_tmpFile" "$_tmpFile"
+replace-vars "$_tmpFile" "$_tmpFile"
+
+cat "$_tmpFile" > "${_workdir}/.env"
