@@ -112,8 +112,7 @@ function replace-vars () {
 
 if [ -f "${_SOURCE_ENV}" ]
 then
-  _tmpFile="$(mktemp)"
-  rm "${_tmpFile}"
+  _tmpFile="$(mktemp -u)"
 
   cp "${_SOURCE_ENV}" "$_tmpFile"
 
