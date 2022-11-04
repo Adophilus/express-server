@@ -104,7 +104,6 @@ function process-vars () {
   done
 }
 
-
 function replace-vars () {
   local sourceFile="$1"
   local destinationFile="$2"
