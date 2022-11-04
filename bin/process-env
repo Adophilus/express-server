@@ -88,6 +88,13 @@ function replace-vars () {
     __vars["$key"]="$value"
   done
 
+  for line in $(cat ".env.sh")
+  do
+    local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
+    local value=$(echo "$line" | sed -E 's/.*?=(.*)/\1/')
+    __vars["$key"]="$(eval "$value")"
+  done
+
   for line in $(cat "$sourceFile")
   do
     local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
