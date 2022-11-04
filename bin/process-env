@@ -3,6 +3,25 @@
 _WORKDIR="$1"
 _SOURCE_ENV="${_WORKDIR}/.env.source"
 
+declare -A __ENV
+
+function read-in-envs () {
+  for line in $(cat ".env.source")
+  do
+    local key=$(echo "$line" | sed -E 's/^(.*?)=.*$/\1/')
+    local value=$(echo "$line" | sed -E 's/^.*?=(.*)$/\1/')
+    __ENV["$key"]="$value"
+  done
+
+  for line in $(cat ".env.sh")
+  do
+    local key=$(echo "$line" | sed -E 's/^(.*?)=.*$/\1/')
+    local value=$(echo "$line" | sed -E 's/^.*?=(.*)$/\1/')
+    echo $value
+    # __ENV["$key"]="$(eval $value)"
+  done
+}
+
 function random-port () {
   local from=1024
   local to=65535
@@ -79,28 +98,12 @@ function replace-vars () {
   local destinationFile="$2"
   local newLines=()
 
-  declare -A __vars
-
-  for line in $(cat ".env.source")
-  do
-    local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
-    local value=$(echo "$line" | sed -E 's/.*?=(.*)/\1/')
-    __vars["$key"]="$value"
-  done
-
-  for line in $(cat ".env.sh")
-  do
-    local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
-    local value=$(echo "$line" | sed -E 's/.*?=(.*)/\1/')
-    __vars["$key"]="$(eval "$value")"
-  done
-
   for line in $(cat "$sourceFile")
   do
     local key=$(echo "$line" | sed -E 's/(.*?)=.*/\1/')
-    if [ -n "${__vars[$key]+abc}" ]
+    if [ -n "${__ENV[$key]+abc}" ]
     then
-      newLines+=("$key=${__vars[$key]}")
+      newLines+=("$key=${__ENV[$key]}")
     else
       newLines+=("$line")
     fi
@@ -123,6 +126,7 @@ then
 
   cp "${_SOURCE_ENV}" "$_tmpFile"
 
+  read-in-envs
   mangle-ports "$_tmpFile" "$_tmpFile"
   process-vars "$_tmpFile" "$_tmpFile"
   replace-vars "$_tmpFile" "$_tmpFile"
