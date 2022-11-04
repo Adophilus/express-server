@@ -6,6 +6,10 @@ _SOURCE_ENV="${_WORKDIR}/.env.source"
 declare -A __ENV
 
 function read-in-envs () {
+  local oldIFS=$IFS
+
+  IFS="
+"
   for line in $(cat ".env.source")
   do
     local key=$(echo "$line" | sed -E 's/^(.*?)=.*$/\1/')
@@ -17,9 +21,10 @@ function read-in-envs () {
   do
     local key=$(echo "$line" | sed -E 's/^(.*?)=.*$/\1/')
     local value=$(echo "$line" | sed -E 's/^.*?=(.*)$/\1/')
-    echo $value
-    # __ENV["$key"]="$(eval $value)"
+    __ENV["$key"]="$(eval $value)"
   done
+
+  IFS=$oldIFS
 }
 
 function random-port () {
@@ -71,10 +76,17 @@ function process-vars () {
     # newLines+=("$(echo $line | sed -E 's/.*\$\{([a-zA-Z0-9_]+)\}.*/\1/g')")
     local newLine="$line"
 
-    while [ -n "$(echo $newLine | grep -E '\$\{([a-zA-Z0-9_]+)\}')" ]
+    while [ -n "$(echo $newLine | grep -E '\$\{([a-zA-Z0-9_\.]+)\}')" ]
     do
-      local key="$(echo $newLine | sed -E 's/.*\$\{([a-zA-Z0-9_]+)\}.*/\1/')"
-      local value=${__vars["$key"]}
+      local key="$(echo $newLine | sed -E 's/.*\$\{([a-zA-Z0-9_\.]+)\}.*/\1/')"
+
+      if [ -n "${__ENV[$key]+abc}" ]
+      then
+        local value=${__ENV["$key"]}
+      else
+        local value=${__vars["$key"]}
+      fi
+
       newLine="$(echo $newLine | sed -E "s/\\\$\{$key\}/$value/")"
     done
 
