@@ -139,8 +139,8 @@ then
 
   read-in-envs
   mangle-ports "$_tmpFile" "$_tmpFile"
-  process-vars "$_tmpFile" "$_tmpFile"
   replace-vars "$_tmpFile" "$_tmpFile"
+  process-vars "$_tmpFile" "$_tmpFile"
 
   cat "$_tmpFile" > "${_WORKDIR}/.env"
 fi
