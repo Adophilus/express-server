@@ -21,7 +21,6 @@ function read-in-envs () {
   do
     local key=$(echo "$line" | sed -E 's/^(.*?)=.*$/\1/')
     local value=$(echo "$line" | sed -E 's/^.*?=(.*)$/\1/')
-    echo $value
     __ENV["$key"]="$(eval "$value")"
   done
 
